@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Tester & Web Capture</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --bg-dark: #0f172a;
+      --surface: #1e293b;
+      --surface-light: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --get: #22c55e;
+      --post: #3b82f6;
+      --put: #f59e0b;
+      --patch: #a855f7;
+      --delete: #ef4444;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text);
+      width: 100%;
+      min-width: 400px;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .container { display: flex; flex-direction: column; gap: 16px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-box { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+    .logo h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.025em; }
+    .logo h1 span { color: var(--primary); }
+
+    .nav-tabs { display: flex; gap: 4px; background: var(--surface); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+    .nav-tab { flex: 1; padding: 6px; border: none; background: transparent; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+    .nav-tab.active { background: var(--surface-light); color: var(--text); }
+
+    .input-group { display: flex; gap: 8px; }
+    select, input, textarea { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 13px; outline: none; transition: all 0.2s; }
+    select:focus, input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+    select { width: 90px; cursor: pointer; }
+    input[type="text"] { flex: 1; }
+
+    .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .card { background: rgba(30, 41, 59, 0.3); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+    .btn-icon { background: rgba(99, 102, 241, 0.1); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+    .btn-icon:hover { background: rgba(99, 102, 241, 0.2); }
+    .btn-icon.special { background: var(--primary); color: white; border: none; padding: 6px 12px; }
+
+    #headers-container { display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; }
+    .header-row { display: flex; gap: 8px; align-items: center; }
+    .header-row input { padding: 8px; font-size: 11px; }
+
+    #send-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+
+    /* History & Screen Styles */
+    #history-list, #tools-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .history-item { 
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;
+    }
+    .history-item:hover { border-color: var(--primary); background: var(--surface-light); }
+    .history-info { display: flex; flex-direction: column; gap: 4px; max-width: 80%; }
+    .history-method { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; width: fit-content; }
+    .history-url { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
+    .history-date { font-size: 9px; color: var(--text-muted); }
+
+    .method-GET { background: rgba(34, 197, 94, 0.1); color: var(--get); border: 1px solid rgba(34, 197, 94, 0.2); }
+    .method-POST { background: rgba(59, 130, 246, 0.1); color: var(--post); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .method-PUT { background: rgba(245, 158, 11, 0.1); color: var(--put); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .method-DELETE { background: rgba(239, 68, 68, 0.1); color: var(--delete); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .method-PATCH { background: rgba(168, 85, 247, 0.1); color: var(--patch); border: 1px solid rgba(168, 85, 247, 0.2); }
+
+    #response-section { border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+    pre { background: #0a0f1d; border: 1px solid var(--border); border-radius: 10px; padding: 12px; max-height: 250px; overflow: auto; font-family: var(--font-mono); font-size: 10px; line-height: 1.5; color: #a5b4fc; }
+
+    .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .tool-card h3 { font-size: 14px; font-weight: 700; }
+    .tool-card p { font-size: 11px; color: var(--text-muted); }
+
+    .hidden { display: none !important; }
+    .loader { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Feedback message */
+    #feedback { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000; transition: all 0.3s; opacity: 0; pointer-events: none; }
+    #feedback.show { opacity: 1; bottom: 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-box">API</div>
+        <h1>API <span>Tester</span> & Capture</h1>
+      </div>
+      <div class="version-tag">Full-HD Suite API</div>
+    </header>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-target="workspace">Workspace</button>
+      <button class="nav-tab" data-target="history">History</button>
+      <button class="nav-tab" data-target="tools">Tools</button>
+    </div>
+
+    <!-- Workspace View -->
+    <div id="workspace-view" class="container">
+      <div class="input-group">
+        <select id="method">
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="DELETE">DELETE</option>
+        </select>
+        <input type="text" id="url" placeholder="https://api.example.com/endpoint" value="https://jsonplaceholder.typicode.com/todos/1">
+      </div>
+
+      <div>
+        <div class="section-title">
+          Headers
+          <button id="add-header" class="btn-icon">Add Row</button>
+        </div>
+        <div class="card" style="margin-top: 6px;">
+          <div id="headers-container"></div>
+        </div>
+      </div>
+
+      <div id="body-section" class="hidden">
+        <div class="section-title">
+          Request Body (JSON)
+          <button id="format-json" class="btn-icon">Format JSON</button>
+        </div>
+        <textarea id="request-body" placeholder='{"key": "value"}' rows="4" style="width: 100%; height: 100px; resize: none; font-family: var(--font-mono);"></textarea>
+      </div>
+
+      <button id="send-btn">
+        <span>Send Request</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+
+      <div id="error-message" class="hidden"></div>
+
+      <div id="response-section" class="hidden">
+        <div class="response-meta">
+          <div class="meta-pills">
+            <div class="meta-pill"><span class="label">Status</span><span id="status-code" class="value">200 OK</span></div>
+            <div class="meta-pill"><span class="label">Time</span><span id="response-time" class="value">0 ms</span></div>
+          </div>
+          <button id="copy-btn" class="btn-icon">Copy</button>
+        </div>
+        <pre><code id="response-body"></code></pre>
+      </div>
+    </div>
+
+    <!-- History View -->
+    <div id="history-view" class="hidden container">
+      <div class="section-title">History <button id="clear-history" class="btn-icon">Clear</button></div>
+      <div id="history-list"></div>
+    </div>
+
+    <!-- Tools View -->
+    <div id="tools-view" class="hidden container">
+      <div class="section-title">Web Tools</div>
+      
+      <div class="tool-card">
+        <h3>HD Screenshot Tools</h3>
+        <p>Captures the entire webpage from top to bottom, or just the visible area.</p>
+        <div style="display: flex; gap: 8px;">
+          <button id="capture-visible-btn" class="btn-icon special" style="flex: 1; background: var(--surface-light); border: 1px solid var(--border); color: var(--text);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Visible Part
+          </button>
+          <button id="capture-full-btn" class="btn-icon special" style="flex: 1;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            Full Page
+          </button>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <h3>Nexus HD Video Recorder (1080p)</h3>
+        <p>Record your screen or specific tabs in high-definition. Audio is included if shared.</p>
+        <div id="recording-status" class="hidden" style="color: var(--error); font-size: 10px; font-weight: 800; animation: pulse 1.5s infinite;">● RECORDING IN PROGRESS</div>
+        <div style="display: flex; gap: 8px;">
+          <button id="start-record-btn" class="btn-icon special" style="flex: 1;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle></svg>
+            Start HD Recording
+          </button>
+          <button id="stop-record-btn" class="btn-icon hidden" style="flex: 1; border-color: var(--error); color: var(--error); background: rgba(239, 68, 68, 0.1);">
+            Stop & Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+  </style>
+
+  <div id="feedback">Feedback appears here</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
