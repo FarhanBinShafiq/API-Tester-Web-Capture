@@ -1,4 +1,6 @@
 # 🚀 API Tester & Web Capture 
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 > An all-in-one browser extension delivering a premium API testing workspace alongside powerful HD full-page screenshot and video capture utilities—all right in your Chrome sidebar or popup window.
 
