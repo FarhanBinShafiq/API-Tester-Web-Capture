@@ -1,62 +1,75 @@
 # 🚀 API Tester & Web Capture 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Build](https://img.shields.io/badge/build-PowerShell-yellow.svg)
 
-> An all-in-one browser extension delivering a premium API testing workspace alongside powerful HD full-page screenshot utilities—all right in your Chrome/Firefox sidebar or popup window.
+> A premium, high-performance browser extension delivering a professional API testing workspace and powerful full-page screenshot utilities—integrated seamlessly into your Chrome Side Panel or Firefox Sidebar.
 
 ---
 
 ## 🔥 Key Features
 
-### 📡 Premium API Workspace
-- **RESTful Capabilities**: Easily perform `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests directly from your browser.
-- **Header Management**: Dynamically add and remove custom headers to simulate perfectly crafted payloads.
-- **Request Body & JSON Formatting**: Built-in JSON request mapping with live beautify/minify utilities.
-- **Persistent History**: Keeps track of up to 50 previous requests securely in your local storage so you can easily reload and re-run past configurations.
-- **Instant Response Parsing**: See Status Codes, Response Times (ms), and beautifully formatted HTTP responses rendered natively.
+### 📡 API Development Workspace
+- **Full REST Support**: Execute `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests with ease.
+- **Header Management**: Full control over custom HTTP headers for complex authentication (JWT, OAuth, etc.).
+- **Dynamic Payloads**: Built-in JSON formatting with live "Prettify" and "Minify" capabilities.
+- **Smart History**: Auto-saves your last 50 requests locally for instant recall and re-execution.
+- **Detailed Metrics**: Real-time tracking of HTTP status codes, response times (ms), and payload sizes.
 
-### 📸 Next-Gen Capture Tools
-- **Deep-Scan Full Page Screenshots**: Unlike ordinary tools, the Nexus deep-scanner temporarily disables browser smooth-scrolling, calculates true document depth, and scrolls down dynamically to capture the entire web page—from header perfectly to footer!
-- **Visible Viewport Snapshots**: Quickly grab everything currently visible on your browser layer with the single click of a button.
+### 📸 Premium Capture Engine
+- **Pixel-Perfect Full Page**: Deep-scans the DOM to capture the entire document, regardless of length, with zero structural overlap.
+- **Viewport Snapping**: High-quality PNG capture of the visible screen area.
+- **Smart Stitching**: Dynamically calculates viewport height and scrolls programmatically to ensure a seamless final image.
+
+### 🖼️ Seamless Sidebar Integration
+- **Persistent View**: Keep the tester open in the Side Panel while you browse, allowing for real-time API experiments without leaving the context of your page.
 
 ---
 
 ## 🛠️ Installation (Developer Mode)
 
-### 🔵 Chrome, Edge, Brave (Chromium)
-1. Download or clone this repository to your local computer.
-2. Open your browser and navigate to the Extensions page:
-   - Chrome: `chrome://extensions/`
-   - Edge: `edge://extensions/`
-3. Enable **Developer Mode** using the toggle switch in the top right corner.
-4. Click on **Load unpacked**.
-5. Select the `postman_extension` folder.
+### 🔵 Chromium Browsers (Chrome, Brave, Edge)
+1. Clone this repository locally.
+2. Open extensions settings via `chrome://extensions/`.
+3. Enable **Developer Mode** (top-right).
+4. Click **Load unpacked** and select the root directory.
 
 ### 🦊 Mozilla Firefox
-1. Download or clone this repository to your local computer.
-2. Open Firefox and type `about:debugging` in the address bar.
-3. Click on **This Firefox** in the left sidebar.
-4. Click on **Load Temporary Add-on...**.
-5. Select `manifest.json` from the `postman_extension` folder.
-6. The extension is now loaded! You can access it via the sidebar or the extensions menu.
+1. Clone this repository locally.
+2. Visit `about:debugging#/runtime/this-firefox`.
+3. Click **Load Temporary Add-on...** and select `manifest.json`.
+4. The extension will appear in your Firefox Sidebar automatically.
 
 ---
 
 ## 🚦 Usage Guide
+1. **API Testing**: Select the **Workspace** tab. Configure your endpoint and method, then click **Send**.
+2. **Historial Review**: Switch to the **History** tab to reload past requests.
+3. **Web Elements**: Use the **Tools** tab for screenshots.
+   - *Note*: During a full-page scan, do not switch tabs for best results!
 
-1. **API Testing**: Open the extension and you'll see the **Workspace** tab. Enter any valid endpoint, configure headers, attach a JSON request body if needed, and hit *Send*.
-2. **Reviewing Old Queries**: Click the **History** tab to see your historical requests. Clicking any item instantly populates the Workspace with that configuration.
-3. **Screenshots**: Click the **Tools** tab. Choose either "Visible Part" or "Full Page" to initiate a screenshot. The PNG image will automatically be downloaded when the canvas finishes rendering.
+---
+
+## 🏗️ Building for Production
+This project includes a PowerShell build script to generate browser-optimized ZIP archives for store submission.
+
+Run the following in PowerShell:
+```powershell
+./build.ps1
+```
+The output will be generated in the `build/` directory:
+- `build/chrome_extension.zip` (Standard Manifest V3 bundle)
+- `build/firefox_extension.zip` (Firefox-specific manifest fixes and Polyfills)
 
 ---
 
 ## 💻 Tech Stack
-- Vanilla **JavaScript (ES6+)**
-- Extension **Manifest V3** Architecture (Cross-Browser compatible)
-- Advanced **Browser APIs** (`chrome.tabs`, `chrome.scripting`, `chrome.storage`, `chrome.downloads`)
-- **HTML5 Canvas** (for dynamic image stitching and multi-axis image processing)
+- **Engine**: Pure JavaScript (ES6+ Vanilla)
+- **Architecture**: Manifest V3 (Cross-Browser Compatible)
+- **APIs**: `chrome.sidePanel`, `chrome.scripting`, `chrome.downloads`, `chrome.storage`
+- **Processing**: HTML5 Canvas for real-time image processing and stitching.
 
-<br/>
+---
 
 > **Note**: For Full-Page captures, the extension programmatically traverses the website by injecting a coordinate mapping script to ensure zero structural overlap. Do not click away or close the popup during a deep scan for best results!
 
