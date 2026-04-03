@@ -1,5 +1,5 @@
 # 🚀 API Tester & Web Capture 
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Build](https://img.shields.io/badge/build-PowerShell-yellow.svg)
 
@@ -12,8 +12,14 @@
 ### 📡 API Development Workspace
 - **Full REST Support**: Execute `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests with ease.
 - **Header Management**: Full control over custom HTTP headers for complex authentication (JWT, OAuth, etc.).
-- **Dynamic Payloads**: Built-in JSON formatting with live "Prettify" and "Minify" capabilities.
+- **Dynamic Payloads**: 
+  - **JSON**: Built-in JSON formatting with live "Prettify" and "Minify" capabilities.
+  - **Form Data (New v1.2.0)**: Support for `application/x-www-form-urlencoded` payloads with an intuitive key-value interface.
 - **Smart History**: Auto-saves your last 50 requests locally for instant recall and re-execution.
+- **Visual Response Processing (New v1.2.0)**:
+  - **Visual Preview**: Render HTML responses in a sandboxed iframe to see exactly what the server sent.
+  - **Image Rendering**: Preview binary images directly in the extension.
+  - **Raw View**: High-fidelity raw text and JSON output.
 - **Detailed Metrics**: Real-time tracking of HTTP status codes, response times (ms), and payload sizes.
 
 ### 📸 Premium Capture Engine
@@ -23,6 +29,7 @@
 
 ### 🖼️ Seamless Sidebar Integration
 - **Persistent View**: Keep the tester open in the Side Panel while you browse, allowing for real-time API experiments without leaving the context of your page.
+- **Keyboard Productivity (New v1.2.0)**: Use `Ctrl + Enter` (or `Cmd + Enter`) to instantly fire requests.
 
 ---
 
@@ -43,9 +50,12 @@
 ---
 
 ## 🚦 Usage Guide
-1. **API Testing**: Select the **Workspace** tab. Configure your endpoint and method, then click **Send**.
-2. **Historial Review**: Switch to the **History** tab to reload past requests.
-3. **Web Elements**: Use the **Tools** tab for screenshots.
+1. **API Testing**: Select the **Workspace** tab. Configure your endpoint and method.
+   - Switch between **JSON** and **Form Data** in the Body section if sending payloads.
+   - Press `Ctrl + Enter` to send.
+2. **Visual Inspection**: After a request, switch between **Raw** and **Visual** response tabs to inspect HTML or images.
+3. **Historial Review**: Switch to the **History** tab to reload past requests.
+4. **Web Elements**: Use the **Tools** tab for screenshots.
    - *Note*: During a full-page scan, do not switch tabs for best results!
 
 ---
@@ -58,8 +68,8 @@ Run the following in PowerShell:
 ./build.ps1
 ```
 The output will be generated in the `build/` directory:
-- `build/chrome_extension.zip` (Standard Manifest V3 bundle)
-- `build/firefox_extension.zip` (Firefox-specific manifest fixes and Polyfills)
+- `build/chrome_extension.zip`
+- `build/firefox_extension.zip`
 
 ---
 
@@ -71,5 +81,9 @@ The output will be generated in the `build/` directory:
 
 ---
 
-> **Note**: For Full-Page captures, the extension programmatically traverses the website by injecting a coordinate mapping script to ensure zero structural overlap. Do not click away or close the popup during a deep scan for best results!
+## 📝 License
+Distributed under the MIT License. See `LICENSE` for more information.
 
+---
+
+> **Note**: For Full-Page captures, the extension programmatically traverses the website by injecting a coordinate mapping script to ensure zero structural overlap. Do not click away or close the popup during a deep scan for best results!
