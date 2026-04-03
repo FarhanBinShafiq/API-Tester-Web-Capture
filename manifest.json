@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "API Tester & Web Capture",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A premium, lightning-fast API testing tool for modern developers.",
   "action": {
     "default_popup": "popup.html",

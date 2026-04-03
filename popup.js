@@ -35,6 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
         tools: document.getElementById('tools-view')
     };
 
+    // New Body & Response elements
+    const bodyJsonTab = document.getElementById('body-json-tab');
+    const bodyFormTab = document.getElementById('body-form-tab');
+    const jsonBodyContainer = document.getElementById('json-body-container');
+    const formBodyContainer = document.getElementById('form-body-container');
+    const formDataContainer = document.getElementById('form-data-container');
+    const addFormRowBtn = document.getElementById('add-form-row');
+
+    const viewRawBtn = document.getElementById('view-raw');
+    const viewVisualBtn = document.getElementById('view-visual');
+    const rawResponseView = document.getElementById('raw-response');
+    const visualResponseView = document.getElementById('visual-response');
+    const previewIframe = document.getElementById('preview-iframe');
+    const previewImg = document.getElementById('preview-img');
+    const previewPlaceholder = document.getElementById('preview-placeholder');
+
+    let currentBodyType = 'json';
+
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const target = tab.dataset.target;
@@ -60,6 +78,74 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formatBtn) formatBtn.addEventListener('click', () => formatTextarea());
     if (toolFormatJson) toolFormatJson.addEventListener('click', () => formatTextarea());
     if (toolMinifyJson) toolMinifyJson.addEventListener('click', () => formatTextarea(true));
+
+    // --- Body Type Switching ---
+    bodyJsonTab.addEventListener('click', () => {
+        currentBodyType = 'json';
+        bodyJsonTab.style.background = 'rgba(99, 102, 241, 0.2)';
+        bodyFormTab.style.background = 'transparent';
+        jsonBodyContainer.classList.remove('hidden');
+        formBodyContainer.classList.add('hidden');
+    });
+
+    bodyFormTab.addEventListener('click', () => {
+        currentBodyType = 'form';
+        bodyFormTab.style.background = 'rgba(99, 102, 241, 0.2)';
+        bodyJsonTab.style.background = 'transparent';
+        formBodyContainer.classList.remove('hidden');
+        jsonBodyContainer.classList.add('hidden');
+        if (formDataContainer.children.length === 0) addFormDataRow();
+    });
+
+    function addFormDataRow(k = '', v = '') {
+        const row = document.createElement('div');
+        row.className = 'header-row';
+        row.style.marginBottom = '4px';
+        
+        const keyInput = document.createElement('input');
+        keyInput.className = 'form-key';
+        keyInput.placeholder = 'Field';
+        keyInput.value = k;
+        
+        const valInput = document.createElement('input');
+        valInput.className = 'form-value';
+        valInput.placeholder = 'Value';
+        valInput.value = v;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-header';
+        removeBtn.textContent = '✕';
+        removeBtn.onclick = () => row.remove();
+
+        row.appendChild(keyInput);
+        row.appendChild(valInput);
+        row.appendChild(removeBtn);
+        formDataContainer.appendChild(row);
+    }
+
+    addFormRowBtn.onclick = () => addFormDataRow();
+
+    // --- Keyboard Shortcuts ---
+    window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            sendRequest();
+        }
+    });
+
+    // --- Response View Switching ---
+    viewRawBtn.addEventListener('click', () => {
+        viewRawBtn.classList.add('active');
+        viewVisualBtn.classList.remove('active');
+        rawResponseView.classList.remove('hidden');
+        visualResponseView.classList.add('hidden');
+    });
+
+    viewVisualBtn.addEventListener('click', () => {
+        viewVisualBtn.classList.add('active');
+        viewRawBtn.classList.remove('active');
+        visualResponseView.classList.remove('hidden');
+        rawResponseView.classList.add('hidden');
+    });
 
     // --- History Logic ---
     async function loadHistory() {
@@ -360,31 +446,77 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const options = { method, headers };
-            if (['POST', 'PUT', 'PATCH'].includes(method) && bodyContent) {
-                JSON.parse(bodyContent); 
-                options.body = bodyContent;
+            
+            if (['POST', 'PUT', 'PATCH'].includes(method)) {
+                if (currentBodyType === 'json' && bodyContent) {
+                    try { JSON.parse(bodyContent); } catch(e) { throw new Error("Invalid JSON in Body"); }
+                    options.body = bodyContent;
+                } else if (currentBodyType === 'form') {
+                    const formData = new URLSearchParams();
+                    document.querySelectorAll('#form-data-container .header-row').forEach(r => {
+                        const k = r.querySelector('.form-key').value.trim();
+                        const v = r.querySelector('.form-value').value.trim();
+                        if (k) formData.append(k, v);
+                    });
+                    options.body = formData;
+                    if (!headers['Content-Type']) {
+                        options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    }
+                }
             }
 
             const start = performance.now();
             const res = await fetch(url, options);
             const time = Math.round(performance.now() - start);
 
+            // Save to history
             const d = await api.storage.local.get(['history']);
             const h = d.history || [];
             h.unshift({ url, method, body: bodyContent, headers, date: new Date().toLocaleDateString(), timestamp: new Date().toLocaleTimeString() });
             await api.storage.local.set({ history: h.slice(0, 50) });
 
+            // Status UI
             statusCode.innerText = `${res.status} ${res.statusText || ''}`;
             statusCode.style.color = res.status < 300 ? 'var(--get)' : (res.status < 500 ? 'var(--warning)' : 'var(--error)');
             responseTime.innerText = `${time} ms`;
 
-            const ct = res.headers.get('content-type');
-            if (ct && ct.includes('json')) {
-                responseBody.textContent = JSON.stringify(await res.json(), null, 2);
+            // Reset Visual Previews
+            previewIframe.style.display = 'none';
+            previewImg.style.display = 'none';
+            previewPlaceholder.style.display = 'block';
+
+            const contentType = res.headers.get('content-type') || '';
+            const blob = await res.blob();
+            const text = await blob.text();
+
+            if (contentType.includes('json')) {
+                try {
+                    const json = JSON.parse(text);
+                    responseBody.textContent = JSON.stringify(json, null, 2);
+                    previewPlaceholder.textContent = "JSON tree view coming soon! For now, use the Raw tab.";
+                } catch (e) {
+                    responseBody.textContent = text;
+                }
+            } else if (contentType.includes('html')) {
+                responseBody.textContent = text;
+                previewIframe.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+                previewIframe.srcdoc = text;
+            } else if (contentType.includes('image')) {
+                responseBody.textContent = "[Binary Image Data]";
+                const url = URL.createObjectURL(blob);
+                previewImg.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+                previewImg.src = url;
             } else {
-                responseBody.textContent = await res.text();
+                responseBody.textContent = text;
             }
+            
             responseSection.classList.remove('hidden');
+            // Auto switch to raw if it's visual and not visualizable
+            if (previewPlaceholder.style.display !== 'none' && viewVisualBtn.classList.contains('active')) {
+                viewRawBtn.click();
+            }
         } catch (e) {
             showError(e.message);
         } finally {

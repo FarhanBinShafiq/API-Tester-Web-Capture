@@ -141,29 +141,58 @@
 
       <div id="body-section" class="hidden">
         <div class="section-title">
-          Request Body (JSON)
-          <button id="format-json" class="btn-icon">Format JSON</button>
+          Body
+          <div style="display: flex; gap: 4px;">
+            <button id="body-json-tab" class="btn-icon active-body-tab" style="background: rgba(99, 102, 241, 0.2);">JSON</button>
+            <button id="body-form-tab" class="btn-icon">Form Data</button>
+          </div>
         </div>
-        <textarea id="request-body" placeholder='{"key": "value"}' rows="4" style="width: 100%; height: 100px; resize: none; font-family: var(--font-mono);"></textarea>
+        
+        <div id="json-body-container">
+          <button id="format-json" class="btn-icon" style="margin-bottom: 4px; font-size: 9px; align-self: flex-end;">Format</button>
+          <textarea id="request-body" placeholder='{"key": "value"}' rows="4" style="width: 100%; height: 100px; resize: none; font-family: var(--font-mono); flex: 1;"></textarea>
+        </div>
+
+        <div id="form-body-container" class="hidden">
+          <div class="card" style="margin-top: 6px;">
+            <div id="form-data-container"></div>
+            <button id="add-form-row" class="btn-icon" style="margin-top: 8px;">Add Field</button>
+          </div>
+        </div>
       </div>
 
       <button id="send-btn">
         <span>Send Request</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        <span style="font-size: 8px; opacity: 0.6; margin-left: 4px;">(Ctrl+Enter)</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 6px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
 
-      <div id="error-message" class="hidden"></div>
+      <div id="error-message" class="hidden" style="color: var(--error); font-size: 11px; padding: 8px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2);"></div>
 
       <div id="response-section" class="hidden">
-        <div class="response-meta">
-          <div class="meta-pills">
-            <div class="meta-pill"><span class="label">Status</span><span id="status-code" class="value">200 OK</span></div>
-            <div class="meta-pill"><span class="label">Time</span><span id="response-time" class="value">0 ms</span></div>
+        <div class="response-meta" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div id="status-code" style="font-weight: 700; font-size: 12px;"></div>
+            <div id="response-time" style="color: var(--text-muted); font-size: 11px;"></div>
           </div>
-          <button id="copy-btn" class="btn-icon">Copy</button>
+          <div style="display: flex; gap: 4px;">
+             <button id="copy-btn" class="btn-icon">Copy</button>
+          </div>
         </div>
-        <pre><code id="response-body"></code></pre>
+        
+        <div id="response-view-tabs" style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <button id="view-raw" class="nav-tab active" style="font-size: 9px; padding: 4px 8px; flex: initial;">Raw Response</button>
+          <button id="view-visual" class="nav-tab" style="font-size: 9px; padding: 4px 8px; flex: initial;">Visual Preview</button>
+        </div>
+
+        <pre id="raw-response"><code id="response-body"></code></pre>
+        <div id="visual-response" class="hidden" style="background: white; border-radius: 10px; padding: 10px; min-height: 120px; display: flex; justify-content: center; align-items: center; overflow: auto; border: 1px solid var(--border);">
+            <div id="preview-placeholder" style="color: #64748b; font-size: 11px;">No visualization available</div>
+            <iframe id="preview-iframe" style="display: none; width: 100%; border: none; min-height: 300px;"></iframe>
+            <img id="preview-img" style="display: none; max-width: 100%; max-height: 400px; object-fit: contain;">
+        </div>
       </div>
+
     </div>
 
     <!-- History View -->
