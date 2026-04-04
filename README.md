@@ -2,88 +2,99 @@
 ![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Build](https://img.shields.io/badge/build-PowerShell-yellow.svg)
+![Platform](https://img.shields.io/badge/platform-Chrome%20|%20Firefox-orange.svg)
 
-> A premium, high-performance browser extension delivering a professional API testing workspace and powerful full-page screenshot utilities—integrated seamlessly into your Chrome Side Panel or Firefox Sidebar.
+> **API Tester & Web Capture** is a premium, high-performance browser extension designed for modern developers. It combines a professional REST API testing suite with powerful, full-page screenshot utilities—all integrated into your Chrome Side Panel or Firefox Sidebar.
+
+---
+
+## ✨ Why Choose API Tester & Web Capture?
+
+- **Zero Tab-Switching**: Test your APIs directly in the Side Panel while keeping your active tab open.
+- **Unified Workflow**: One tool for API debugging AND frontend visual capture.
+- **Privacy First**: All history and data are stored locally in your browser.
+- **Cross-Browser**: Fully optimized for Chromium (Chrome, Brave, Edge) and Mozilla Firefox.
 
 ---
 
 ## 🔥 Key Features
 
-### 📡 API Development Workspace
-- **Full REST Support**: Execute `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests with ease.
-- **Header Management**: Full control over custom HTTP headers for complex authentication (JWT, OAuth, etc.).
-- **Dynamic Payloads**: 
-  - **JSON**: Built-in JSON formatting with live "Prettify" and "Minify" capabilities.
-  - **Form Data (New v1.2.0)**: Support for `application/x-www-form-urlencoded` payloads with an intuitive key-value interface.
-- **Smart History**: Auto-saves your last 50 requests locally for instant recall and re-execution.
-- **Visual Response Processing (New v1.2.0)**:
-  - **Visual Preview**: Render HTML responses in a sandboxed iframe to see exactly what the server sent.
-  - **Image Rendering**: Preview binary images directly in the extension.
-  - **Raw View**: High-fidelity raw text and JSON output.
-- **Detailed Metrics**: Real-time tracking of HTTP status codes, response times (ms), and payload sizes.
+### 📡 Advanced API Development Workspace
+*   **Full REST Support**: Execute `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests with surgical precision.
+*   **Header Management**: Add, remove, and manage custom HTTP headers (JWT, OAuth, Cookies, etc.).
+*   **Dynamic Payloads (v1.2.0)**:
+    *   **JSON Engine**: Syntax-aware editor with "Beautify" and "Minify" toggles.
+    *   **Form Data**: Direct support for `application/x-www-form-urlencoded` payloads with an intuitive key-value builder.
+*   **Visual Response Decoding (v1.2.0)**:
+    *   **Live Preview**: Sandbox iframe for rendering HTML responses (perfect for testing SSR pages).
+    *   **Image Viewer**: Direct preview for binary image responses (PNG, JPEG, SVG).
+    *   **Raw Output**: High-fidelity text viewer for JSON, XML, and plain text.
+*   **Persistence**: Smart history keeps tracking of your last 50 requests for instant re-execution.
+*   **Performance Metrics**: Real-time HTTP status colors, millisecond-accurate response timing, and payload size tracking.
 
-### 📸 Premium Capture Engine
-- **Pixel-Perfect Full Page**: Deep-scans the DOM to capture the entire document, regardless of length, with zero structural overlap.
-- **Viewport Snapping**: High-quality PNG capture of the visible screen area.
-- **Smart Stitching**: Dynamically calculates viewport height and scrolls programmatically to ensure a seamless final image.
-
-### 🖼️ Seamless Sidebar Integration
-- **Persistent View**: Keep the tester open in the Side Panel while you browse, allowing for real-time API experiments without leaving the context of your page.
-- **Keyboard Productivity (New v1.2.0)**: Use `Ctrl + Enter` (or `Cmd + Enter`) to instantly fire requests.
+### 📸 Pro Capture Engine (Nexus)
+*   **Full-Page Deep Scan**: Programmatically scrolls and stitches the DOM to capture the entire document, no matter how long.
+*   **Viewport Precision**: Instant high-quality PNG snap of your current screen area.
+*   **HD Fidelity**: Intelligent canvas resolution handling (DPR) ensures no pixel data is lost.
+*   **Auto-Scroll Correction**: Defeats "Smooth Scrolling" during capture to ensure zero stitching seams or overlap errors.
 
 ---
 
-## 🛠️ Installation (Developer Mode)
+## 🛠️ Installation
 
 ### 🔵 Chromium Browsers (Chrome, Brave, Edge)
-1. Clone this repository locally.
-2. Open extensions settings via `chrome://extensions/`.
-3. Enable **Developer Mode** (top-right).
-4. Click **Load unpacked** and select the root directory.
+1.  **Clone** or download this repository.
+2.  Navigate to `chrome://extensions/`.
+3.  Toggle **Developer Mode** on (top-right).
+4.  Click **Load unpacked** and select the project folder.
 
 ### 🦊 Mozilla Firefox
-1. Clone this repository locally.
-2. Visit `about:debugging#/runtime/this-firefox`.
-3. Click **Load Temporary Add-on...** and select `manifest.json`.
-4. The extension will appear in your Firefox Sidebar automatically.
+1.  Navigate to `about:debugging#/runtime/this-firefox`.
+2.  Click **Load Temporary Add-on...**.
+3.  Select the `manifest.json` from the project folder.
+4.  Open the **Sidebar** (`Ctrl+B` or `Cmd+B`) and select the extension.
 
 ---
 
-## 🚦 Usage Guide
-1. **API Testing**: Select the **Workspace** tab. Configure your endpoint and method.
-   - Switch between **JSON** and **Form Data** in the Body section if sending payloads.
-   - Press `Ctrl + Enter` to send.
-2. **Visual Inspection**: After a request, switch between **Raw** and **Visual** response tabs to inspect HTML or images.
-3. **Historial Review**: Switch to the **History** tab to reload past requests.
-4. **Web Elements**: Use the **Tools** tab for screenshots.
-   - *Note*: During a full-page scan, do not switch tabs for best results!
+## 🚦 Daily Workflow
+
+1.  **API Testing**:
+    *   Open the extension in the **Side Panel** (`Ctrl+Shift+L` or click the icon).
+    *   Configure your endpoint and method. Switch between **JSON** and **Form Data** tabs for the body.
+    *   **Pro Tip**: Use `Ctrl + Enter` to fire requests instantly.
+2.  **Visual Inspection**:
+    *   After your request completes, toggle between the **Raw** and **Visual** tabs to inspect the result.
+3.  **Site Capture**:
+    *   Switch to the **Tools** tab. Click **Full Page** to start a deep scan.
+    *   *Note*: Stay on the current tab until the download prompt appears for the best result.
 
 ---
 
-## 🏗️ Building for Production
-This project includes a PowerShell build script to generate browser-optimized ZIP archives for store submission.
+## 🏗️ Build & Distribution
+This project includes an automated PowerShell build script that optimizes the extension for store submission.
 
-Run the following in PowerShell:
+Run the script:
 ```powershell
 ./build.ps1
 ```
-The output will be generated in the `build/` directory:
+Output artifacts in `build/`:
 - `build/chrome_extension.zip`
 - `build/firefox_extension.zip`
 
 ---
 
-## 💻 Tech Stack
-- **Engine**: Pure JavaScript (ES6+ Vanilla)
-- **Architecture**: Manifest V3 (Cross-Browser Compatible)
-- **APIs**: `chrome.sidePanel`, `chrome.scripting`, `chrome.downloads`, `chrome.storage`
-- **Processing**: HTML5 Canvas for real-time image processing and stitching.
+## 💻 Technical Excellence
+- **Frontend**: Pure Vanilla JavaScript (ES6+), Modern CSS (Variables, HSL).
+- **Communication**: Manifest V3 compliant messaging and SidePanel APIs.
+- **Graphics**: HTML5 Canvas multi-segment stitching engine.
+- **Cross-Platform**: Unified codebase with dynamic Firefox compatibility patching in the build script.
 
 ---
 
-## 📝 License
-Distributed under the MIT License. See `LICENSE` for more information.
+## 📝 License & Attribution
+Distributed under the **MIT License**. Created by [Farhan].
+
+*Disclaimer: For full-page captures, the extension programmatically traverses the website based on DOM height. Results may vary on sites with extreme infinite scroll or virtual lists.*
 
 ---
 
-> **Note**: For Full-Page captures, the extension programmatically traverses the website by injecting a coordinate mapping script to ensure zero structural overlap. Do not click away or close the popup during a deep scan for best results!
